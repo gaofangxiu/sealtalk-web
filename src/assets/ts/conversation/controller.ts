@@ -660,7 +660,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType, $scope.currentConversation.targetId);
         RongIMLib.RongUploadLib.getInstance().setListeners({
           onFileAdded:function(files: any){
-              RongIMLib.RongUploadLib.getInstance().startUpload($scope.currentConversation.targetType,$scope.currentConversation.targetId);
+              RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType,$scope.currentConversation.targetId);
               for (var i = 0, len = files.length; i < len; i++) {
                   if (files[i].type.indexOf("image") > -1) {
                     continue;
@@ -706,14 +706,17 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 $scope.$apply();
             });
           },
-          onFileUploaded:function(message: webimmodel.Message, file: any){
-            var info: any = JSON.parse(info);
-            var item: webimmodel.Message = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
-            item.content.uri = IMGDOMAIN + info.key;
-            item.content.state = 3;
-            $scope.uploadStatus.show = false;
-            $scope.uploadStatus.progress = 0;
-            $scope.$apply();
+          onFileUploaded:function( file: any, message: webimmodel.Message){
+              if (file.type.indexOf('image') > -1) {
+                $scope.uploadStatus.show = false;
+                $scope.uploadStatus.progress = 0;
+              }
+              else{
+                var item = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
+                item.content.uri = message.content.imageUri;
+                item.content.state = 3;
+              }
+              $scope.$apply();
           },
           onError:function(err: any, errTip: string){
               // for(var i = 0;i < up.files.lenght; i++){
@@ -866,7 +869,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             //     showLoading(false);
             //     webimutil.Helper.alertMessage.error("上传图片出错！", 2);
             // });
-            RongIMLib.RongUploadLib.getInstance().postImage(strBase64, $scope.currentConversation.targetType, $scope.currentConversation.targetId, function(ret: any){
+            RongIMLib.RongUploadLib.getInstance().postImage(strBase64, $scope.currentConversation.targetType, $scope.currentConversation.targetId, function(ret: any,msg: any){
               console.log(ret);
             });
         }

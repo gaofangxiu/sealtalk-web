@@ -81,14 +81,14 @@ var RongIMLib;
         };
         RongUploadLib.prototype.reload = function (image, file) {
             var me = this;
-            !me.store['IMAGE'] && me.store["imgOpts"] && image == 'IMAGE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {
+            me.store['IMAGE'] && me.store["imgOpts"] && image == 'IMAGE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {
                 onSuccess: function (data) {
                     me.store["imgOpts"]["uptoken"] = data.token;
                     me.createOptions(me.store["imgOpts"], 'IMAGE');
                 },
                 onError: function (error) { }
             });
-            !me.store['FILE'] && me.store['fileOpts'] && file == 'FILE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.FILE, {
+            me.store['FILE'] && me.store['fileOpts'] && file == 'FILE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.FILE, {
                 onSuccess: function (data) {
                     me.store['fileOpts']["uptoken"] = data.token;
                     me.createOptions(me.store['fileOpts'], 'FILE');

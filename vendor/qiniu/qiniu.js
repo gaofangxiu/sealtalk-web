@@ -625,6 +625,7 @@ function QiniuJsSDK() {
           }
         };
 
+        info.response = info.response.replace(/'/g,'"');
         var res = that.parseJSON(info.response);
         ctx = ctx ? ctx : res.ctx;
         if (ctx) {
