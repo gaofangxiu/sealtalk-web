@@ -29,7 +29,7 @@
           </div>
       </div>
       <div class="groupFunBtn" style="color: #00a0ff;" ng-show="!isEditable" ng-click="toChat()">发起群聊</div>
-      <div class="groupFunBtn" style="color: #00a0ff;" ng-show="!isEditable" ng-click="toBulletin()">群公告</div>
+      <div class="groupFunBtn" style="color: #00a0ff;" ng-show="!isEditable&&groupInfo.isCreater" ng-click="toBulletin()">群公告</div>
       <div class="groupAddUser" ng-show="isEditable" ng-click="addmember()"><a href="javascript:void 0"></a>添加新成员</div>
       <div class="groupUserList" style="margin-bottom: 200px;">
           <div>

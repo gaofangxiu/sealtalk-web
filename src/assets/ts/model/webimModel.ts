@@ -222,7 +222,7 @@ module webimmodel {
                 case MessageType.TextMessage:
                     var texmsg = new TextMessage();
                     var content = SDKmsg.content.content;
-
+                    content = content.replace(/</gi, '&lt;').replace(/>/gi, '&gt;');
                     if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.emojiToHTML) {
                         content = RongIMLib.RongIMEmoji.emojiToHTML(content);
                     }
@@ -347,7 +347,7 @@ module webimmodel {
                         groupnot.content = SDKmsg.content.message;
                         msg.content = groupnot;
                         msg.panelType = webimmodel.PanelType.InformationNotification;
-                    } else if(SDKmsg.objectName == "RC:RLStart" || SDKmsg.objectName == "RC:RL"){
+                    } else if(SDKmsg.objectName == "RC:RLStart" || SDKmsg.objectName == "RC:RL" || SDKmsg.objectName == "RC:RcCmd"){
 
                     }
                     else

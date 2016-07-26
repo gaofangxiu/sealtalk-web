@@ -22,11 +22,11 @@ var RongIMLib;
             var me = this;
             var head = document.getElementsByTagName('head')[0];
             var plScript = document.createElement('script');
-            plScript.src = 'upload/plupload/js/plupload.dev.js';
+            plScript.src = 'assets/js/plupload.min.js';
             plScript.onload = plScript.onreadystatechange = function () {
                 if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
                     var qiniuScript = document.createElement('script');
-                    qiniuScript.src = "upload/qiniu.js";
+                    qiniuScript.src = "assets/js/qiniu.js";
                     qiniuScript.onload = plScript.onreadystatechange = function () {
                         if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
                             imgOpts && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {

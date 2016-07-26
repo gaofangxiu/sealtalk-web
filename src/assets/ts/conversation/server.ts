@@ -132,7 +132,9 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
                 RongIMSDKServer.getHistoryMessages(+conver, currentConversationTargetId, lastTime, count).then(function(data) {
                     var has = data.has, list = <RongIMLib.Message[]>data.data;
                     var msglen = list.length;
-                    conversationServer.pullMessageTime = list[msglen-1].sentTime;
+                    if(msglen > 0){
+                      conversationServer.pullMessageTime = list[msglen - 1].sentTime;
+                    }
                     while (msglen--) {
                         var msgsdk = list[msglen];
 

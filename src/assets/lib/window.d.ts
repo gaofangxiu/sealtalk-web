@@ -29,6 +29,7 @@ declare module RongIMLib {
         startUpload(conversationType: string, targetId: string): void
         stopUpload(): void
         getThumbnail(): void
+        postImage(base64: string, conversationType: webimmodel.conversationType, targetId: string, callback:any): void
     }
 }
 

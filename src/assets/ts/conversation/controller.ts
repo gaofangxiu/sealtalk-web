@@ -36,13 +36,15 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         $scope.defaultSearch = false;
         if (groupid != "0") {
           $scope.groupInfo = mainDataServer.contactsList.getGroupById(groupid);
-          rawGroutList = webimutil.Helper.cloneObject($scope.groupInfo.memberList);
-
-          for (var i = rawGroutList.length-1; i >= 0; i--) {
-              if (rawGroutList[i].id === mainDataServer.loginUser.id) {
-                  rawGroutList.splice(i, 1);
-              }
+          if($scope.groupInfo){
+            rawGroutList = webimutil.Helper.cloneObject($scope.groupInfo.memberList);
+            for (var i = rawGroutList.length-1; i >= 0; i--) {
+                if (rawGroutList[i].id === mainDataServer.loginUser.id) {
+                    rawGroutList.splice(i, 1);
+                }
+            }
           }
+
           $scope.showGroupList = webimutil.Helper.cloneObject(rawGroutList);
         }
         $scope.selectMember = function (item: webimmodel.Member) {
@@ -397,6 +399,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             _message = _message.replace(/^<br>$/i, "");
             _message = _message.replace(/<br>/gi, "\n")
             _message = _message.replace(/&amp;/gi, "&");
+            _message = _message.replace(/&lt;/gi, '<').replace(/&gt;/gi, '>');
             $scope.showemoji = false;
 
             if (!targetType && !targetId) {
@@ -615,6 +618,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
 
 
 
+
         // if (!conversationServer.uploadFileToken) {
         //     mainServer.user.getImageToken().success(function(rep) {
         //         //qiniu上传
@@ -722,6 +726,28 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
           onUploadComplete:function(){
           }
         });
+
+
+        conversationServer.initUpload = function(){
+          mainServer.user.getImageToken().success(function(rep) {
+              //qiniu上传
+              conversationServer.uploadFileToken = rep.result.token;
+              uploadFileInit();
+          }).error(function() {
+              webimutil.Helper.alertMessage.error("图片上传初始化失败", 2);
+          });
+        }
+        conversationServer.initUpload();
+        $scope.uploadStatus = {
+            show: false,
+            progress: 0,
+            cancle: function() {
+                qiniuuploader.stop && qiniuuploader.stop();
+                $scope.uploadStatus.show = false;
+                $scope.uploadStatus.progress = 0;
+                qiniuuploader.files.pop();
+            }
+        }
 
         var qiniuuploader: any;
         function uploadFileInit() {
