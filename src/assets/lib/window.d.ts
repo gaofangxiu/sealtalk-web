@@ -25,6 +25,7 @@ declare module RongIMLib {
     class RongUploadLib {
         static init(imgOpts?: any, fileOpts?: any): void
         static getInstance(): RongUploadLib;
+        start(conversationType: string, targetId: string): void
         setListeners(listener: any): void
         startUpload(conversationType: string, targetId: string): void
         stopUpload(): void

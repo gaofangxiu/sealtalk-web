@@ -652,11 +652,12 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         //     }
         // }
         //
-        RongIMLib.RongUploadLib.init(
-          {domain:IMGDOMAIN,drop_element:'Message',container:'MessageForm',browse_button:'upload-file'}
-          // {domain:'http://o83059m7d.bkt.clouddn.com/',drop_element:'container2',container:'container2',browse_button:'pickfiles2'}
-        );
+        // RongIMLib.RongUploadLib.init(
+        //   {domain:IMGDOMAIN,drop_element:'Message',container:'MessageForm',browse_button:'upload-file'}
+        //   // {domain:'http://o83059m7d.bkt.clouddn.com/',drop_element:'container2',container:'container2',browse_button:'pickfiles2'}
+        // );
 
+        RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType, $scope.currentConversation.targetId);
         RongIMLib.RongUploadLib.getInstance().setListeners({
           onFileAdded:function(files: any){
               RongIMLib.RongUploadLib.getInstance().startUpload($scope.currentConversation.targetType,$scope.currentConversation.targetId);
@@ -845,25 +846,28 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         }
 
         function uploadBase64(strBase64: string, file: any) {
-            var req = {
-                method: 'POST',
-                url: 'http://up.qiniu.com/putb64/-1',
-                headers: {
-                    'Content-Type': 'application/octet-stream',
-                    'Authorization': "UpToken " + conversationServer.uploadFileToken
-                },
-                withCredentials: false,
-                data: strBase64
-            };
-            $http(req).success(function (res) {
-                // callback && callback.onSuccess && callback.onSuccess();
-                getThumbnailAndSendImg(res, file);
-                showLoading(false);
-                $scope.showPasteDiv(false);
-            }).error(function (err) {
-                console.log('uploadBase64', err);
-                showLoading(false);
-                webimutil.Helper.alertMessage.error("上传图片出错！", 2);
+            // var req = {
+            //     method: 'POST',
+            //     url: 'http://up.qiniu.com/putb64/-1',
+            //     headers: {
+            //         'Content-Type': 'application/octet-stream',
+            //         'Authorization': "UpToken " + conversationServer.uploadFileToken
+            //     },
+            //     withCredentials: false,
+            //     data: strBase64
+            // };
+            // $http(req).success(function (res) {
+            //     // callback && callback.onSuccess && callback.onSuccess();
+            //     getThumbnailAndSendImg(res, file);
+            //     showLoading(false);
+            //     $scope.showPasteDiv(false);
+            // }).error(function (err) {
+            //     console.log('uploadBase64', err);
+            //     showLoading(false);
+            //     webimutil.Helper.alertMessage.error("上传图片出错！", 2);
+            // });
+            RongIMLib.RongUploadLib.getInstance().postImage(strBase64, $scope.currentConversation.targetType, $scope.currentConversation.targetId, function(ret: any){
+              console.log(ret);
             });
         }
 

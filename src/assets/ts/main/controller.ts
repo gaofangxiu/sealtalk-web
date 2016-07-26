@@ -281,6 +281,10 @@ mainCtr.controller("mainController", ["$scope", "$state", "$window", "$timeout",
               RongIMSDKServer.getConversationList().then(function(list) {
                   mainDataServer.conversation.updateConversations();
               });
+              RongIMLib.RongUploadLib.init(
+                {domain:'http://7xogjk.com1.z0.glb.clouddn.com/',drop_element:'Message',container:'MessageForm',browse_button:'upload-file'}
+                // {domain:'http://o83059m7d.bkt.clouddn.com/',drop_element:'container2',container:'container2',browse_button:'pickfiles2'}
+              );
           }, function(error) {
               if (error.tokenError) {
                   //token 错误。
