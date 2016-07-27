@@ -22,11 +22,11 @@ var RongIMLib;
             var me = this;
             var head = document.getElementsByTagName('head')[0];
             var plScript = document.createElement('script');
-            plScript.src = 'assets/js/plupload.min.js';
+            plScript.src = 'upload/plupload/js/plupload.min.js';
             plScript.onload = plScript.onreadystatechange = function () {
                 if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
                     var qiniuScript = document.createElement('script');
-                    qiniuScript.src = "assets/js/qiniu.js";
+                    qiniuScript.src = "upload/qiniu.js";
                     qiniuScript.onload = plScript.onreadystatechange = function () {
                         if (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete') {
                             imgOpts && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {
@@ -79,16 +79,23 @@ var RongIMLib;
             this.store[this.uploadType].removeFile(file);
             ;
         };
+        RongUploadLib.prototype.cancelAll = function (callback) {
+            var up = this.store[this.uploadType], files = up.files;
+            for (var i = 0, len = files.length; i < len; i++) {
+                up.removeFile(files[i]);
+            }
+            callback();
+        };
         RongUploadLib.prototype.reload = function (image, file) {
             var me = this;
-            me.store['IMAGE'] && me.store["imgOpts"] && image == 'IMAGE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {
+            me.store["imgOpts"] && image == 'IMAGE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.IMAGE, {
                 onSuccess: function (data) {
                     me.store["imgOpts"]["uptoken"] = data.token;
                     me.createOptions(me.store["imgOpts"], 'IMAGE');
                 },
                 onError: function (error) { }
             });
-            me.store['FILE'] && me.store['fileOpts'] && file == 'FILE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.FILE, {
+            me.store['fileOpts'] && file == 'FILE' && RongIMLib.RongIMClient.getInstance().getFileToken(RongIMLib.FileType.FILE, {
                 onSuccess: function (data) {
                     me.store['fileOpts']["uptoken"] = data.token;
                     me.createOptions(me.store['fileOpts'], 'FILE');

@@ -614,7 +614,7 @@ conversationDire.directive("fileMessage", [function() {
               '<img ng-src="{{imgType}}">' +
             '</div>' +
             '<div class="file_name fl">' +
-              '<p class="p1">{{item.name}}.{{item.type}}</p>' +
+              '<p class="p1">{{item.name}}</p>' +
               '<p class="p2">{{showSize}}</p>' +
               '<div class="up_process"><div></div></div>' +
             '</div>' +
@@ -675,7 +675,9 @@ conversationDire.directive("fileMessage", [function() {
                   showSize = scope.item.size >= 1024 ? fomate(scope.item.size / 1024) + 'M' : fomate(scope.item.size) + 'K';
                   angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', '100%');
                   angular.element(ele[0].getElementsByClassName("up_process")[0]).css('display', 'none');
-                  unbingWatch();
+                  if(typeof unbingWatch === 'function' || typeof unbingWatch === "object"){
+                    unbingWatch();
+                  }
                   break;
               }
               scope.showSize = showSize;
