@@ -876,8 +876,19 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             //     showLoading(false);
             //     webimutil.Helper.alertMessage.error("上传图片出错！", 2);
             // });
-            RongIMLib.RongUploadLib.getInstance().postImage(strBase64, $scope.currentConversation.targetType, $scope.currentConversation.targetId, function(ret: any,msg: any){
-              console.log(ret);
+            RongIMLib.RongUploadLib.getInstance().postImage(strBase64, $scope.currentConversation.targetType, $scope.currentConversation.targetId, function(ret: any,msg: any, err: any){
+                showLoading(false);
+                if(err){
+                  webimutil.Helper.alertMessage.error("上传图片出错！", 2);
+                  return;
+                }
+                $scope.showPasteDiv(false);
+                conversationServer.addHistoryMessages($scope.currentConversation.targetId, $scope.currentConversation.targetType, webimmodel.Message.convertMsg(msg));
+                setTimeout(function () {
+                    $scope.$emit("msglistchange");
+                    $scope.$emit("conversationChange");
+                }, 200);
+                $scope.$apply();
             });
         }
 

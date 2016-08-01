@@ -6348,7 +6348,7 @@ var RongIMLib;
                 me.xmlhttp.setRequestHeader("Content-type", "application/octet-stream");
                 me.xmlhttp.setRequestHeader('Authorization', "UpToken " + me.options.token);
             }
-            me.xmlhttp.send("data=" + encodeURIComponent(me.options.base64));
+            me.xmlhttp.send(me.options.base64);
         };
         return RongAjax;
     })();

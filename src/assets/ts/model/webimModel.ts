@@ -352,6 +352,8 @@ module webimmodel {
                     }
                     else
                     {
+                        msg.content = '当前版本暂不支持查看此消息';
+                        msg.panelType = webimmodel.PanelType.InformationNotification;
                         console.log("has unknown message type " + SDKmsg.messageType)
                     }
                     break;
@@ -450,7 +452,7 @@ module webimmodel {
                         break;
                 }
             }
-            else {
+            else if(msgtype == webimmodel.MessageType.TextMessage){
                 msgContent = msg.content ? msg.content.content : "";
 
                 msgContent = webimutil.Helper.escapeSymbol.escapeHtml(msgContent);
@@ -471,6 +473,9 @@ module webimmodel {
                 msgContent = msgContent.replace(/([\w]{49,50})/g, "$1 ");
                 // }
 
+            }
+            else {
+                msgContent = "[当前版本暂不支持查看此消息]";
             }
             return msgContent;
         }
