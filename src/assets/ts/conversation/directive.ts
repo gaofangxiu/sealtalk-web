@@ -667,13 +667,14 @@ conversationDire.directive("fileMessage", [function() {
                   break;
                 case -1:
                 case webimmodel.FileState.Uploading:
-                  showSize = scope.item.size >= 1024 ? fomate(scope.item.size / 1024) + 'M' : fomate(scope.item.size) + 'K';
+                  var kbSize = scope.item.size / 1024;
+                  showSize = kbSize >= 1024 ? fomate(kbSize / 1024) + 'M' : fomate(kbSize) + 'K';
                   angular.element(ele[0].getElementsByClassName("up_process")[0]).css('display', 'block');
                   angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', scope.item.extra);
                   break;
                 case webimmodel.FileState.Success:
-                  showSize = scope.item.size >= 1024 ? fomate(scope.item.size / 1024) + 'M' : fomate(scope.item.size) + 'K';
-                  angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', '100%');
+                  var kbSize = scope.item.size / 1024;
+                  showSize = kbSize >= 1024 ? fomate(kbSize / 1024) + 'M' : fomate(kbSize) + 'K';                  angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', '100%');
                   angular.element(ele[0].getElementsByClassName("up_process")[0]).css('display', 'none');
                   if(typeof unbingWatch === 'function' || typeof unbingWatch === "object"){
                     unbingWatch();

@@ -657,34 +657,34 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         //   // {domain:'http://o83059m7d.bkt.clouddn.com/',drop_element:'container2',container:'container2',browse_button:'pickfiles2'}
         // );
 
-        RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType, $scope.currentConversation.targetId);
+
         RongIMLib.RongUploadLib.getInstance().setListeners({
-          onFileAdded:function(files: any){
+          onFileAdded:function(file: any){
               RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType,$scope.currentConversation.targetId);
-              for (var i = 0, len = files.length; i < len; i++) {
-                  if (files[i].type.indexOf("image") > -1) {
-                    continue;
+              // for (var i = 0, len = files.length; i < len; i++) {
+                  if (file.type.indexOf("image") > -1) {
+                    return;
                   }
                 var msg = new webimmodel.Message();
                 msg.conversationType = $scope.currentConversation.targetType;
                 msg.objectName = 'RC:FileMsg';
                 msg.messageDirection = webimmodel.MessageDirection.SEND;
-                msg.messageId = files[i].id;
-                msg.messageUId = files[i].id;
+                msg.messageId = file.id;
+                msg.messageUId = file.id;
                 msg.senderUserId = mainDataServer.loginUser.id;
                 msg.sentTime = new Date();
                 msg.targetId = $scope.currentConversation.targetId;
                 msg.messageType = webimmodel.MessageType.FileMessage;
-                var file: any = new webimmodel.FileMessage();
-                file.name = files[i].name;
-                file.size = files[i].size/1024;
-                file.type = '';
+                var filemsg: any = new webimmodel.FileMessage();
+                filemsg.name = file.oldName || file.name;
+                filemsg.size = file.size;
+                filemsg.type = '';
                 // file.uri = SDKmsg.content.uri;
                 // file.extra = SDKmsg.content.extra;
-                file.state = 0;
-                msg.content = file;
+                filemsg.state = 0;
+                msg.content = filemsg;
                 addmessage(msg);
-              }
+              // }
               $scope.$apply();
           },
           onBeforeUpload:function(file: any){
@@ -731,6 +731,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
           }
         });
 
+        RongIMLib.RongUploadLib.getInstance().reload('IMAGE','FILE');
 
         conversationServer.initUpload = function(){
           mainServer.user.getImageToken().success(function(rep) {
@@ -741,7 +742,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
               webimutil.Helper.alertMessage.error("图片上传初始化失败", 2);
           });
         }
-        conversationServer.initUpload();
+        // conversationServer.initUpload();
         $scope.uploadStatus = {
             show: false,
             progress: 0,
