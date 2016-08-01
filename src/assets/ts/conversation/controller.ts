@@ -717,6 +717,13 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 item.content.state = 3;
               }
               $scope.$apply();
+              if(message.messageType == webimmodel.MessageType.ImageMessage){
+                conversationServer.addHistoryMessages($scope.currentConversation.targetId, $scope.currentConversation.targetType, webimmodel.Message.convertMsg(message));
+                setTimeout(function () {
+                    $scope.$emit("msglistchange");
+                    $scope.$emit("conversationChange");
+                }, 200);
+              }
           },
           onError:function(err: any, errTip: string){
               // for(var i = 0;i < up.files.lenght; i++){
