@@ -657,7 +657,6 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         //   // {domain:'http://o83059m7d.bkt.clouddn.com/',drop_element:'container2',container:'container2',browse_button:'pickfiles2'}
         // );
 
-
         RongIMLib.RongUploadLib.getInstance().setListeners({
           onFileAdded:function(file: any){
               RongIMLib.RongUploadLib.getInstance().start($scope.currentConversation.targetType,$scope.currentConversation.targetId);
@@ -716,7 +715,6 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                 item.content.uri = message.content.imageUri;
                 item.content.state = 3;
               }
-              $scope.$apply();
               if(message.messageType == webimmodel.MessageType.ImageMessage){
                 conversationServer.addHistoryMessages($scope.currentConversation.targetId, $scope.currentConversation.targetType, webimmodel.Message.convertMsg(message));
                 setTimeout(function () {
@@ -724,6 +722,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                     $scope.$emit("conversationChange");
                 }, 200);
               }
+              $scope.$apply();
           },
           onError:function(err: any, errTip: string){
               // for(var i = 0;i < up.files.lenght; i++){

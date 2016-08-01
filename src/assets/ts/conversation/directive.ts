@@ -629,6 +629,7 @@ conversationDire.directive("fileMessage", [function() {
             var imgType = 'undefined', showSize = '';
             scope.itemid = scope.$parent.item.messageUId;
             scope.Cancel =  function(){
+              RongIMLib.RongUploadLib.getInstance().cancel(scope.itemid);
               scope.item.state = 1;
             }
             scope.Download =  function(){

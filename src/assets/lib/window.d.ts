@@ -32,6 +32,8 @@ declare module RongIMLib {
         getThumbnail(): void
         postImage(base64: string, conversationType: webimmodel.conversationType, targetId: string, callback:any): void
         destroy(): void
+        cancel(file: any): void
+        cancelAll(callback: any): void
     }
 }
 

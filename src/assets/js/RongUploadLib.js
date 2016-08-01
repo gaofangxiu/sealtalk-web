@@ -318,6 +318,8 @@ var RongIMLib;
                         }
                         var imgData = context.getImageData(_x, _y, target_w, target_h);
                         context.createImageData(target_w, target_h);
+                        canvas.width = target_w;
+                        canvas.height = target_h;
                         context.putImageData(imgData, 0, 0);
                     }
                     var _canvas = canvas.toDataURL("image/jpeg", 0.5);
