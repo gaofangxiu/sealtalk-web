@@ -376,6 +376,16 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
           return !keepGoing;
         }
 
+        function updateSendMessage(id: string, type: string, msg: webimmodel.Message){
+          var currenthis = conversationServer.historyMessagesCache[type + "_" + id];
+          for(var i = currenthis.length - 1; i > -1; i--){
+            if (currenthis[i].panelType == webimmodel.PanelType.Message && currenthis[i].messageUId == 'undefined' && currenthis[i].messageDirection == webimmodel.MessageDirection.SEND) {
+                currenthis.splice(i, 1, msg);
+                break;
+            }
+          }
+        }
+
         function getMessageById(id: string, type: string, messageuid: string){
           var currenthis = conversationServer.historyMessagesCache[type + "_" + id];
           var keepGoing = true;
@@ -403,6 +413,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
         conversationServer.clearHistoryMessages = clearHistoryMessages;
         conversationServer.getLastMessageTime = getLastMessageTime;
         conversationServer.getMessageById = getMessageById;
+        conversationServer.updateSendMessage = updateSendMessage;
 
         return conversationServer;
     }])
@@ -427,4 +438,5 @@ interface conversationServer {
     getMessageById(id: string, type:number, messageuid: string): webimmodel.Message
     clearHistoryMessages(id: string, type: number): void
     getLastMessageTime(id: string, type: number): number
+    updateSendMessage(id: string, type:number, message: webimmodel.Message): boolean
 }

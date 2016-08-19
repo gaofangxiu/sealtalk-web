@@ -21,6 +21,8 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         var targetId = $state.params["targetId"];
         var targetType = Number($state.params["targetType"]);
         var currentCon = new webimmodel.Conversation();
+        var hasUnreadMessage = false;
+        var initMessageLen = 0;
         currentCon.targetId = targetId;
         currentCon.targetType = targetType;
         $scope.currentConversation = currentCon;
@@ -180,6 +182,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             } else {
                 mainDataServer.conversation.currentConversation = mainDataServer.conversation.getConversation(targetType, targetId);
                 $scope.currentConversation = mainDataServer.conversation.currentConversation;
+                hasUnreadMessage = $scope.currentConversation.unReadNum > 0;
             }
             $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId);
 
@@ -215,9 +218,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                     $scope.messagesloading = false;
                 }, 0)
                 var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-                if(lastItem && lastItem.messageUId && lastItem.sentTime){
+                if(lastItem && lastItem.messageUId && lastItem.sentTime && hasUnreadMessage){
                   sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
                 }
+                initMessageLen = conversationServer.conversationMessageListShow.length;
             }, function(err) {
                 conversationServer.conversationMessageList = currenthis;
                 conversationServer.conversationMessageListShow.length = 0;
@@ -233,13 +237,14 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             conversationServer.conversationMessageListShow.length = 0;
             conversationServer.conversationMessageListShow = webimutil.Helper.cloneObject(currenthis);
             var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-            if(lastItem && lastItem.messageUId && lastItem.sentTime){
+            if(lastItem && lastItem.messageUId && lastItem.sentTime && hasUnreadMessage){
               sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
             }
             setTimeout(function() {
                 adjustScrollbars();
                 $scope.messagesloading = false;
             }, 0)
+            initMessageLen = conversationServer.conversationMessageListShow.length;
         }
 
 
@@ -481,6 +486,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
 
             RongIMSDKServer.sendMessage(targetType, targetId, msg, atFlag && (targetType == webimmodel.conversationType.Group || targetType == webimmodel.conversationType.Discussion)).then(function(msg) {
                atArray = [];
+               
                $scope.mainData.conversation.updateConStatic(webimmodel.Message.convertMsg(msg), true, true);
             }, function(error: any) {
               var content = '';
@@ -985,7 +991,7 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
           //  sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
           if(targetType == webimmodel.conversationType.Group){
             var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-            if(lastItem && lastItem.messageUId && lastItem.sentTime){
+            if(lastItem && lastItem.messageUId && lastItem.sentTime && initMessageLen && initMessageLen < conversationServer.conversationMessageListShow.length){
               sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
             }
           }
