@@ -223,7 +223,7 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
 // 定时清理消息缓存
         function clearHistoryMessages(id: string, type: string) {
           var currenthis = conversationServer.historyMessagesCache[type + "_" + id];
-          var counter = 0,counterAll = 0;
+          var counter = 0;
           for(var i = currenthis.length - 1; i > -1; i--){
             if (currenthis[i].panelType == webimmodel.PanelType.Message) {
                 counter++;
@@ -379,7 +379,12 @@ conversationServer.factory("conversationServer", ["$q", "mainDataServer", "mainS
         function updateSendMessage(id: string, type: string, msg: webimmodel.Message){
           var currenthis = conversationServer.historyMessagesCache[type + "_" + id];
           for(var i = currenthis.length - 1; i > -1; i--){
-            if (currenthis[i].panelType == webimmodel.PanelType.Message && currenthis[i].messageUId == 'undefined' && currenthis[i].messageDirection == webimmodel.MessageDirection.SEND) {
+            if (currenthis[i].panelType == webimmodel.PanelType.Message
+              && currenthis[i].messageUId == undefined
+              && currenthis[i].messageDirection == webimmodel.MessageDirection.SEND
+              && currenthis[i].messageType == msg.messageType
+              && currenthis[i].content.extra == msg.content.extra
+            ) {
                 currenthis.splice(i, 1, msg);
                 break;
             }

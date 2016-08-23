@@ -232,6 +232,7 @@ module webimmodel {
                         content = RongIMLib.RongIMEmoji.emojiToHTML(content);
                     }
                     texmsg.content = content;
+                    texmsg.extra = SDKmsg.content.extra;
                     // texmsg.content = '<xmp>' + content + '</xmp>';
                     msg.content = texmsg;
                     msg.mentionedInfo = SDKmsg.content.mentionedInfo;
@@ -244,6 +245,7 @@ module webimmodel {
                     }
                     image.content = content;
                     image.imageUri = SDKmsg.content.imageUri;
+                    image.extra = SDKmsg.content.extra;
 
                     msg.content = image;
                     break;
@@ -528,6 +530,7 @@ module webimmodel {
     export class TextMessage {
         userInfo: UserInfo;
         content: string;
+        extra: string;
         constructor(msg?: any) {
             msg = msg || {};
             this.content = msg.content;
@@ -545,6 +548,7 @@ module webimmodel {
         userInfo: UserInfo;
         content: string;
         imageUri: string;
+        extra: string;
     }
 
     export class VoiceMessage {

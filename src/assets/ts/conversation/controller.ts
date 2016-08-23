@@ -21,8 +21,6 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
         var targetId = $state.params["targetId"];
         var targetType = Number($state.params["targetType"]);
         var currentCon = new webimmodel.Conversation();
-        var hasUnreadMessage = false;
-        var initMessageLen = 0;
         currentCon.targetId = targetId;
         currentCon.targetType = targetType;
         $scope.currentConversation = currentCon;
@@ -182,7 +180,6 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             } else {
                 mainDataServer.conversation.currentConversation = mainDataServer.conversation.getConversation(targetType, targetId);
                 $scope.currentConversation = mainDataServer.conversation.currentConversation;
-                hasUnreadMessage = $scope.currentConversation.unReadNum > 0;
             }
             $scope.currentConversation.draftMsg = RongIMSDKServer.getDraft(targetType, targetId);
 
@@ -218,10 +215,9 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
                     $scope.messagesloading = false;
                 }, 0)
                 var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-                if(lastItem && lastItem.messageUId && lastItem.sentTime && hasUnreadMessage){
+                if(lastItem && lastItem.messageUId && lastItem.sentTime){
                   sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
                 }
-                initMessageLen = conversationServer.conversationMessageListShow.length;
             }, function(err) {
                 conversationServer.conversationMessageList = currenthis;
                 conversationServer.conversationMessageListShow.length = 0;
@@ -237,14 +233,13 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             conversationServer.conversationMessageListShow.length = 0;
             conversationServer.conversationMessageListShow = webimutil.Helper.cloneObject(currenthis);
             var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-            if(lastItem && lastItem.messageUId && lastItem.sentTime && hasUnreadMessage){
+            if(lastItem && lastItem.messageUId && lastItem.sentTime){
               sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
             }
             setTimeout(function() {
                 adjustScrollbars();
                 $scope.messagesloading = false;
             }, 0)
-            initMessageLen = conversationServer.conversationMessageListShow.length;
         }
 
 
@@ -273,7 +268,8 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
           var messageUId = messageuid;
           var lastMessageSendTime = sendtime;
           // 以上 3 个属性在会话的最后一条消息中可以获得。
-          if(targetType != webimmodel.conversationType.Private && targetType != webimmodel.conversationType.Group){
+          // if(targetType != webimmodel.conversationType.Private && targetType != webimmodel.conversationType.Group){
+          if(targetType != webimmodel.conversationType.Private){
             return;
           }
           var msg = RongIMLib.ReadReceiptMessage.obtain(messageUId, lastMessageSendTime, 1);
@@ -439,6 +435,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
            }
         }
 
+        function getRandom (begin: number,end: number){
+         return Math.floor(Math.random()*(end-begin))+begin;
+        }
+
         $scope.sendBtn = function() {
             var ele = <any>document.querySelector(".no_network");
             if(ele && ele.style.visibility == 'visible'){
@@ -483,11 +483,13 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
               // mentioneds.mentionedContent = con;
               msg.mentionedInfo = mentioneds;
             }
+            msg.extra = getRandom(1,1000).toString();
 
             RongIMSDKServer.sendMessage(targetType, targetId, msg, atFlag && (targetType == webimmodel.conversationType.Group || targetType == webimmodel.conversationType.Discussion)).then(function(msg) {
                atArray = [];
-               
-               $scope.mainData.conversation.updateConStatic(webimmodel.Message.convertMsg(msg), true, true);
+               var _message = webimmodel.Message.convertMsg(msg);
+               $scope.mainData.conversation.updateConStatic(_message, true, true);
+              //  conversationServer.updateSendMessage(targetId, targetType, _message);
             }, function(error: any) {
               var content = '';
               switch (error.errorCode) {
@@ -840,7 +842,8 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
             }
             else if(file.percent > 0){
               var item = conversationServer.getMessageById($scope.currentConversation.targetId, $scope.currentConversation.targetType, file.id);
-              item.content.extra = file.percent + "%";
+              // item.content.extra = file.percent + "%";
+              item.content.progress = file.percent;
               item.content.state = item.content.state == webimmodel.FileState.Uploading ? -1 : webimmodel.FileState.Uploading;
             }
             // else if(file.percent == 0){
@@ -991,12 +994,10 @@ conversationCtr.controller("conversationController", ["$scope", "$state", "mainD
           //  sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
           if(targetType == webimmodel.conversationType.Group){
             var lastItem = conversationServer.conversationMessageListShow[conversationServer.conversationMessageListShow.length - 1];
-            if(lastItem && lastItem.messageUId && lastItem.sentTime && initMessageLen && initMessageLen < conversationServer.conversationMessageListShow.length){
+            if(lastItem && lastItem.messageUId && lastItem.sentTime){
               sendReadReceiptMessage(lastItem.messageUId, lastItem.sentTime.getTime());
             }
           }
         });
-        // 删除消息数
-        //获取最后一条消息时间
 
     }])

@@ -473,9 +473,10 @@ conversationDire.directive("textMessage", [function() {
     return {
         restrict: "E",
         scope: {
-            item: "="
+            item: "=",
+            uid: "="
         },
-        template: '<div class="" id="{{itemid}}">' +
+        template: '<div class="" id="{{uid}}">' +
         '<div class="Message-text">' +
         // '<pre class="at_all_people" ng-show="isAtAll">@所有人</pre>' +
         '<pre class="Message-entry" ng-bind-html="content|trustHtml">' +
@@ -495,7 +496,7 @@ conversationDire.directive("textMessage", [function() {
             if(scope.$parent.item.mentionedInfo && scope.$parent.item.mentionedInfo.type == webimmodel.AtTarget.Part){
               scope.isAtPart = true;
             }
-            scope.itemid = scope.$parent.item.messageUId;
+            // scope.itemid = scope.$parent.item.messageUId;
             scope.content = scope.item.content.replace(EMailReg, function(str: any) {
                 EMailArr.push(str);
                 return '[email`' + (EMailArr.length - 1) + ']';
@@ -635,7 +636,7 @@ conversationDire.directive("fileMessage", [function() {
               '<p class="p2">{{showSize}}</p>' +
               '<div class="up_process"><div></div></div>' +
             '</div>' +
-            '<a ng-show="isover" href="{{item.fileUrl}}">' +
+            '<a ng-show="isover" href="{{item.fileUrl}}" download>' +
             // '<div class="file_btn fr" ng-click="Download()">' +
             '<div class="file_btn fr">' +
             '</div>' +
@@ -648,9 +649,9 @@ conversationDire.directive("fileMessage", [function() {
         link: function(scope: any, ele: angular.IRootElementService, attr: any) {
           var imgType = 'undefined', showSize = '', showName = '',maxSize = 20;
           showName = scope.item.name;
-          if(window.Electron){
-             angular.element(ele[0].getElementsByTagName("a")[0]).attr("target","_blank");
-          }
+          // if(window.Electron){
+          //    angular.element(ele[0].getElementsByTagName("a")[0]).attr("target","_blank");
+          // }
           function getBLen(str: string) {
             if (str == null) return 0;
             if (typeof str != "string"){
@@ -826,7 +827,7 @@ conversationDire.directive("fileMessage", [function() {
                 var kbSize = scope.item.size / 1024;
                 showSize = kbSize >= 1024 ? fomate(kbSize / 1024) + ' M' : fomate(kbSize) + ' K';
                 angular.element(ele[0].getElementsByClassName("up_process")[0]).css('display', 'block');
-                angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', scope.item.extra);
+                angular.element(ele[0].getElementsByClassName("up_process")[0].children[0]).css('width', scope.item.progress + '%');
                 break;
               case webimmodel.FileState.Success:
                 var kbSize = scope.item.size / 1024;
